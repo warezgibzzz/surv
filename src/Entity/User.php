@@ -19,19 +19,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         #[ORM\Id]
         #[ORM\GeneratedValue]
         #[ORM\Column(type: 'integer')]
-        private readonly int             $id,
+        private ?int    $id = null,
 
         #[ORM\Column(type: 'string', length: 180, unique: true)]
-        private string                   $email,
+        private ?string $email = null,
 
         #[ORM\Column(type: 'string')]
-        private string                   $password,
+        private ?string $password = null,
 
         #[ORM\Column(type: 'json')]
-        private array                    $roles = [],
+        private ?array  $roles = [],
 
         #[ORM\OneToMany(mappedBy: 'participant', targetEntity: Result::class, orphanRemoval: true)]
-        private $results = new ArrayCollection()
+        private         $results = new ArrayCollection()
     )
     {
     }
