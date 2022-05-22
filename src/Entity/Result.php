@@ -8,60 +8,79 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: ResultRepository::class)]
 class Result
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private $id;
+    public function __construct(
+        #[ORM\Id]
+        #[ORM\GeneratedValue]
+        #[ORM\Column(type: 'integer')]
+        private readonly int    $id,
 
-    #[ORM\ManyToOne(targetEntity: Survey::class, inversedBy: 'results')]
-    #[ORM\JoinColumn(nullable: false)]
-    private $survey;
+        #[ORM\ManyToOne(targetEntity: Survey::class, inversedBy: 'results')]
+        #[ORM\JoinColumn(nullable: false)]
+        private Survey $survey,
 
-    #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'results')]
-    #[ORM\JoinColumn(nullable: false)]
-    private $participant;
+        #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'results')]
+        #[ORM\JoinColumn(nullable: false)]
+        private User   $participant,
 
-    #[ORM\Column(type: 'json')]
-    private $data = [];
+        #[ORM\Column(type: 'json')]
+        private array  $data = []
+    )
+    {
+    }
 
-    public function getId(): ?int
+    /**
+     * @return int
+     */
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getSurvey(): ?Survey
+    /**
+     * @return Survey
+     */
+    public function getSurvey(): Survey
     {
         return $this->survey;
     }
 
-    public function setSurvey(?Survey $survey): self
+    /**
+     * @param Survey $survey
+     */
+    public function setSurvey(Survey $survey): void
     {
         $this->survey = $survey;
-
-        return $this;
     }
 
-    public function getParticipant(): ?User
+    /**
+     * @return User
+     */
+    public function getParticipant(): User
     {
         return $this->participant;
     }
 
-    public function setParticipant(?User $participant): self
+    /**
+     * @param User $participant
+     */
+    public function setParticipant(User $participant): void
     {
         $this->participant = $participant;
-
-        return $this;
     }
 
-    public function getData(): ?array
+    /**
+     * @return array
+     */
+    public function getData(): array
     {
         return $this->data;
     }
 
-    public function setData(array $data): self
+    /**
+     * @param array $data
+     */
+    public function setData(array $data): void
     {
         $this->data = $data;
-
-        return $this;
     }
 }

@@ -10,24 +10,24 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: SurveyRepository::class)]
 class Survey
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private $id;
 
-    #[ORM\Column(type: 'string', length: 255)]
-    private $name;
 
-    #[ORM\OneToMany(mappedBy: 'survey', targetEntity: Answer::class, orphanRemoval: true)]
-    private $answers;
+    public function __construct(
+        #[ORM\Id]
+        #[ORM\GeneratedValue]
+        #[ORM\Column(type: 'integer')]
+        private readonly int             $id,
 
-    #[ORM\OneToMany(mappedBy: 'survey', targetEntity: Result::class, orphanRemoval: true)]
-    private $results;
+        #[ORM\Column(type: 'string', length: 255)]
+        private string                   $name,
 
-    public function __construct()
+        #[ORM\OneToMany(mappedBy: 'survey', targetEntity: Answer::class, orphanRemoval: true)]
+        private readonly ArrayCollection $answers = new ArrayCollection(),
+
+        #[ORM\OneToMany(mappedBy: 'survey', targetEntity: Result::class, orphanRemoval: true)]
+        private readonly ArrayCollection $results = new ArrayCollection(),
+    )
     {
-        $this->answers = new ArrayCollection();
-        $this->results = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -58,7 +58,7 @@ class Survey
     public function addAnswer(Answer $answer): self
     {
         if (!$this->answers->contains($answer)) {
-            $this->answers[] = $answer;
+            $this->answers->add($answer);
             $answer->setSurvey($this);
         }
 
@@ -88,7 +88,7 @@ class Survey
     public function addResult(Result $result): self
     {
         if (!$this->results->contains($result)) {
-            $this->results[] = $result;
+            $this->results->add($result);
             $result->setSurvey($this);
         }
 

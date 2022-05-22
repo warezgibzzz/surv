@@ -15,26 +15,27 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private $id;
 
-    #[ORM\Column(type: 'string', length: 180, unique: true)]
-    private $email;
 
-    #[ORM\Column(type: 'json')]
-    private $roles = [];
+    public function __construct(
+        #[ORM\Id]
+        #[ORM\GeneratedValue]
+        #[ORM\Column(type: 'integer')]
+        private readonly int             $id,
 
-    #[ORM\Column(type: 'string')]
-    private $password;
+        #[ORM\Column(type: 'string', length: 180, unique: true)]
+        private string                   $email,
 
-    #[ORM\OneToMany(mappedBy: 'participant', targetEntity: Result::class, orphanRemoval: true)]
-    private $results;
+        #[ORM\Column(type: 'string')]
+        private string                   $password,
 
-    public function __construct()
+        #[ORM\Column(type: 'json')]
+        private array                    $roles = [],
+
+        #[ORM\OneToMany(mappedBy: 'participant', targetEntity: Result::class, orphanRemoval: true)]
+        private readonly ArrayCollection $results = new ArrayCollection()
+    )
     {
-        $this->results = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -61,7 +62,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     /**
@@ -118,7 +119,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function addResult(Result $result): self
     {
         if (!$this->results->contains($result)) {
-            $this->results[] = $result;
+            $this->results->add($result);
             $result->setParticipant($this);
         }
 

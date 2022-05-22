@@ -8,59 +8,78 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: AnswerRepository::class)]
 class Answer
 {
-    #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private $id;
+    public function __construct(
+        #[ORM\Id]
+        #[ORM\GeneratedValue]
+        #[ORM\Column(type: 'integer')]
+        private readonly int    $id,
 
-    #[ORM\Column(type: 'text')]
-    private $name;
+        #[ORM\Column(type: 'text')]
+        private string $name,
 
-    #[ORM\ManyToOne(targetEntity: Survey::class, inversedBy: 'answers')]
-    #[ORM\JoinColumn(nullable: false)]
-    private $survey;
+        #[ORM\ManyToOne(targetEntity: Survey::class, inversedBy: 'answers')]
+        #[ORM\JoinColumn(nullable: false)]
+        private Survey $survey,
 
-    #[ORM\Column(type: 'integer')]
-    private $position;
+        #[ORM\Column(type: 'integer')]
+        private int    $position
+    )
+    {
+    }
 
-    public function getId(): ?int
+    /**
+     * @return int
+     */
+    public function getId(): int
     {
         return $this->id;
     }
 
-    public function getName(): ?string
+    /**
+     * @return string
+     */
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function setName(string $name): self
+    /**
+     * @param string $name
+     */
+    public function setName(string $name): void
     {
         $this->name = $name;
-
-        return $this;
     }
 
-    public function getSurvey(): ?Survey
+    /**
+     * @return Survey
+     */
+    public function getSurvey(): Survey
     {
         return $this->survey;
     }
 
-    public function setSurvey(?Survey $survey): self
+    /**
+     * @param Survey $survey
+     */
+    public function setSurvey(Survey $survey): void
     {
         $this->survey = $survey;
-
-        return $this;
     }
 
-    public function getPosition(): ?int
+    /**
+     * @return int
+     */
+    public function getPosition(): int
     {
         return $this->position;
     }
 
-    public function setPosition(int $position): self
+    /**
+     * @param int $position
+     */
+    public function setPosition(int $position): void
     {
         $this->position = $position;
-
-        return $this;
     }
 }
