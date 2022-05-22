@@ -22,7 +22,7 @@ class SurveyController extends AbstractController
         ]);
     }
 
-    #[Route('/new', name: 'app_survey_new', methods: ['GET', 'POST'])]
+    #[Route('/survey/new', name: 'app_survey_new', methods: ['GET', 'POST'])]
     public function new(Request $request, SurveyRepository $surveyRepository): Response
     {
         $survey = new Survey();
@@ -41,7 +41,7 @@ class SurveyController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_survey_show', methods: ['GET'])]
+    #[Route('/survey/{id}', name: 'app_survey_show', methods: ['GET'])]
     public function show(Survey $survey): Response
     {
         return $this->render('survey/show.html.twig', [
@@ -49,7 +49,7 @@ class SurveyController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}/edit', name: 'app_survey_edit', methods: ['GET', 'POST'])]
+    #[Route('/survey/{id}/edit', name: 'app_survey_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Survey $survey, SurveyRepository $surveyRepository): Response
     {
         $form = $this->createForm(SurveyType::class, $survey);
@@ -67,7 +67,7 @@ class SurveyController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'app_survey_delete', methods: ['POST'])]
+    #[Route('/survey/{id}', name: 'app_survey_delete', methods: ['POST'])]
     public function delete(Request $request, Survey $survey, SurveyRepository $surveyRepository): Response
     {
         if ($this->isCsrfTokenValid('delete'.$survey->getId(), $request->request->get('_token'))) {
