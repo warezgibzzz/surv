@@ -5,14 +5,16 @@
 {% block body %}
     <div class="col-12">
         <h1 class="align-bottom d-flex align-items-center justify-content-between">
-            <span>Список опросов</span>
+            <span>Список тестов</span>
+            {% if is_granted('ROLE_ADMIN') %}
             <a class="float-end btn btn-success " href="{{ path('app_survey_new') }}">Создать новый</a>
+            {% endif %}
         </h1>
         <hr>
         <div class="card">
             <ul class="list-group list-group-flush">
                 {% for survey in surveys %}
-                    <li class="list-group-item">
+                    <li class="list-group-item d-flex justify-content-between">
                         <h3>{{ survey.name }}</h3>
                         <div class="btn-group">
                             <a class="btn btn-info" href="{{ path('app_survey_show', {'id': survey.id}) }}">
@@ -23,8 +25,9 @@
                                 {% endif %}
                             </a>
                             {% if is_granted('ROLE_ADMIN') %}
-                            <a class="btn btn-success"  href="{{ path('app_survey_edit', {'id': survey.id}) }}">Редактировать тест</a>
-                            <a class="btn btn-danger"  href="{{ path('app_survey_edit', {'id': survey.id}) }}">Удалить тест</a>
+                                <a class="btn btn-success" href="{{ path('app_survey_edit', {'id': survey.id}) }}">Редактировать
+                                    тест</a>
+                                {{ include('survey/_delete_form.html.twig') }}
                             {% endif %}
                         </div>
                     </li>

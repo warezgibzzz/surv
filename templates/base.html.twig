@@ -21,7 +21,7 @@
             <ul class="navbar-nav">
                 {% if is_granted('ROLE_ADMIN') %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url('app_user_index') }}">Пользователи</a>
+                        <a class="nav-link" href="{{ url('app_user_index') }}">Ответы</a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="{{ url('app_user_index') }}">Пользователи</a>
@@ -50,10 +50,26 @@
         integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
         crossorigin="anonymous"></script>
 <script>
+    const addTagFormDeleteLink = (item) => {
+        const removeFormButton = document.createElement('button');
+        removeFormButton.innerText = 'Удалить';
+        removeFormButton.classList.add('btn', 'btn-danger', 'float-end');
+
+        item.append(removeFormButton);
+
+        removeFormButton.addEventListener('click', (e) => {
+            e.preventDefault();
+            // remove the li for the tag form
+            item.remove();
+        });
+    }
+
     const addFormToCollection = (e) => {
         const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
 
         const item = document.createElement('li');
+
+        item.classList.add('clearfix');
 
         item.innerHTML = collectionHolder
             .dataset
@@ -63,10 +79,20 @@
                 collectionHolder.dataset.index
             );
 
+
+        addTagFormDeleteLink(item);
+
         collectionHolder.appendChild(item);
 
         collectionHolder.dataset.index++;
+
     };
+
+    document
+        .querySelectorAll('.form-collection li')
+        .forEach((tag) => {
+            addTagFormDeleteLink(tag)
+        })
 
     document
         .querySelectorAll('.add_item_link')

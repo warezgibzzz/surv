@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Answer;
 use App\Entity\Survey;
 use App\Entity\User;
 use App\Form\SurveyType;
@@ -38,9 +39,9 @@ class SurveyController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/survey/new', name: 'app_survey_new', methods: ['GET', 'POST'])]
     public function new(
-        Request          $request,
-        SurveyRepository $surveyRepository,
-        AnswerRepository $answerRepository,
+        Request                $request,
+        SurveyRepository       $surveyRepository,
+        AnswerRepository       $answerRepository,
         EntityManagerInterface $manager
     ): Response
     {
@@ -80,8 +81,21 @@ class SurveyController extends AbstractController
             return $this->redirectToRoute('app_survey_index');
         }
 
+        $answers = $survey->getAnswers()->toArray();
+
+        usort($answers, function (Answer $a, Answer $b) {
+            if ($a->getPosition() == $b->getPosition()) {
+                return 0;
+            }
+
+
+            return ($a->getPosition() > $b->getPosition()) ? 1 : -1;
+
+        });
+
         return $this->render('survey/show.html.twig', [
             'survey' => $survey,
+            'answers' => $answers
         ]);
     }
 
@@ -89,10 +103,10 @@ class SurveyController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/survey/{id}/edit', name: 'app_survey_edit', methods: ['GET', 'POST'])]
     public function edit(
-        Request $request,
-        Survey $survey,
-        SurveyRepository $surveyRepository,
-        AnswerRepository $answerRepository,
+        Request                $request,
+        Survey                 $survey,
+        SurveyRepository       $surveyRepository,
+        AnswerRepository       $answerRepository,
         EntityManagerInterface $manager
     ): Response
     {
