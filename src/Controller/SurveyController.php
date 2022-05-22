@@ -5,8 +5,10 @@ namespace App\Controller;
 use App\Entity\Survey;
 use App\Entity\User;
 use App\Form\SurveyType;
+use App\Repository\AnswerRepository;
 use App\Repository\ResultRepository;
 use App\Repository\SurveyRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,14 +37,25 @@ class SurveyController extends AbstractController
 
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/survey/new', name: 'app_survey_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, SurveyRepository $surveyRepository): Response
+    public function new(
+        Request          $request,
+        SurveyRepository $surveyRepository,
+        AnswerRepository $answerRepository,
+        EntityManagerInterface $manager
+    ): Response
     {
         $survey = new Survey();
         $form = $this->createForm(SurveyType::class, $survey);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $surveyRepository->add($survey, true);
+            $surveyRepository->add($survey);
+            foreach ($survey->getAnswers() as $answer) {
+                $answer->setSurvey($survey);
+                $answerRepository->add($answer);
+            }
+
+            $manager->flush();
 
             return $this->redirectToRoute('app_survey_index', [], Response::HTTP_SEE_OTHER);
         }
@@ -75,13 +88,25 @@ class SurveyController extends AbstractController
 
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/survey/{id}/edit', name: 'app_survey_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Survey $survey, SurveyRepository $surveyRepository): Response
+    public function edit(
+        Request $request,
+        Survey $survey,
+        SurveyRepository $surveyRepository,
+        AnswerRepository $answerRepository,
+        EntityManagerInterface $manager
+    ): Response
     {
         $form = $this->createForm(SurveyType::class, $survey);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $surveyRepository->add($survey, true);
+            $surveyRepository->add($survey);
+            foreach ($survey->getAnswers() as $answer) {
+                $answer->setSurvey($survey);
+                $answerRepository->add($answer);
+            }
+
+            $manager->flush();
 
             return $this->redirectToRoute('app_survey_index', [], Response::HTTP_SEE_OTHER);
         }

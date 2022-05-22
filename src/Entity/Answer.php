@@ -12,17 +12,17 @@ class Answer
         #[ORM\Id]
         #[ORM\GeneratedValue]
         #[ORM\Column(type: 'integer')]
-        private readonly int    $id,
+        private ?int    $id = null,
 
         #[ORM\Column(type: 'text')]
-        private string $name,
+        private ?string $name = null,
 
         #[ORM\ManyToOne(targetEntity: Survey::class, inversedBy: 'answers')]
         #[ORM\JoinColumn(nullable: false)]
-        private Survey $survey,
+        private ?Survey $survey = null,
 
         #[ORM\Column(type: 'integer')]
-        private int    $position
+        private ?int    $position = null
     )
     {
     }

@@ -12,18 +12,18 @@ class Result
         #[ORM\Id]
         #[ORM\GeneratedValue]
         #[ORM\Column(type: 'integer')]
-        private readonly int    $id,
+        private ?int    $id = null,
 
         #[ORM\ManyToOne(targetEntity: Survey::class, inversedBy: 'results')]
         #[ORM\JoinColumn(nullable: false)]
-        private Survey $survey,
+        private ?Survey $survey = null,
 
         #[ORM\ManyToOne(targetEntity: User::class, inversedBy: 'results')]
         #[ORM\JoinColumn(nullable: false)]
-        private User   $participant,
+        private ?User   $participant = null,
 
         #[ORM\Column(type: 'json')]
-        private array  $data = []
+        private ?array  $data = []
     )
     {
     }

@@ -20,10 +20,10 @@ class Survey
         private ?string              $name = null,
 
         #[ORM\OneToMany(mappedBy: 'survey', targetEntity: Answer::class, orphanRemoval: true)]
-        private readonly ?Collection $answers = new ArrayCollection(),
+        private ?Collection $answers = new ArrayCollection(),
 
         #[ORM\OneToMany(mappedBy: 'survey', targetEntity: Result::class, orphanRemoval: true)]
-        private readonly ?Collection $results = new ArrayCollection(),
+        private ?Collection $results = new ArrayCollection(),
     )
     {
     }

@@ -24,6 +24,7 @@ class SurveyType extends AbstractType
             ->add('answers',
             CollectionType::class,
                 options: [
+                    'label' => 'Ответы',
                     'entry_type' => AnswerType::class,
                     'allow_add' => true,
                     'allow_delete' => true
