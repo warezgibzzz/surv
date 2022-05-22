@@ -1,10 +1,10 @@
 {{ form_start(form) }}
 {{ form_row(form.name) }}
-
+{{ form_label(form.answers) }}
 <ol class="answers form-collection"
     data-index="{{ form.answers|length > 0 ? form.answers|last.vars.name + 1 : 0 }}"
     data-prototype="{{ form_widget(form.answers.vars.prototype)|e('html_attr') }}"
->
+
     {% for answer in form.answers %}
         <li class="clearfix">
             {{ form_row(answer.name) }}
