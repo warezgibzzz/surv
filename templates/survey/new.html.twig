@@ -3,9 +3,12 @@
 {% block title %}New Survey{% endblock %}
 
 {% block body %}
-    <h1>Create new Survey</h1>
-
-    {{ include('survey/_form.html.twig') }}
-
-    <a href="{{ path('app_survey_index') }}">back to list</a>
+    <div class="col-12">
+        <h1 class="align-bottom d-flex align-items-center justify-content-between">
+            <span>Создание теста</span>
+            <a class="float-end btn btn-success " href="{{ path('app_survey_index') }}">К списку</a>
+        </h1>
+        <hr>
+        {{ include('survey/_form.html.twig') }}
+    </div>
 {% endblock %}

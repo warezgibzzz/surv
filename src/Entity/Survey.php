@@ -14,16 +14,16 @@ class Survey
         #[ORM\Id]
         #[ORM\GeneratedValue]
         #[ORM\Column(type: 'integer')]
-        private readonly int $id,
+        private ?int                 $id = null,
 
         #[ORM\Column(type: 'string', length: 255)]
-        private string       $name,
+        private ?string              $name = null,
 
         #[ORM\OneToMany(mappedBy: 'survey', targetEntity: Answer::class, orphanRemoval: true)]
-        private              $answers = new ArrayCollection(),
+        private readonly ?Collection $answers = new ArrayCollection(),
 
         #[ORM\OneToMany(mappedBy: 'survey', targetEntity: Result::class, orphanRemoval: true)]
-        private              $results = new ArrayCollection(),
+        private readonly ?Collection $results = new ArrayCollection(),
     )
     {
     }

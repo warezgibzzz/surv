@@ -3,33 +3,37 @@
 {% block title %}Survey index{% endblock %}
 
 {% block body %}
-    <h1>Survey index</h1>
-
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>actions</th>
-            </tr>
-        </thead>
-        <tbody>
-        {% for survey in surveys %}
-            <tr>
-                <td>{{ survey.id }}</td>
-                <td>{{ survey.name }}</td>
-                <td>
-                    <a href="{{ path('app_survey_show', {'id': survey.id}) }}">show</a>
-                    <a href="{{ path('app_survey_edit', {'id': survey.id}) }}">edit</a>
-                </td>
-            </tr>
-        {% else %}
-            <tr>
-                <td colspan="3">no records found</td>
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-
-    <a href="{{ path('app_survey_new') }}">Create new</a>
+    <div class="col-12">
+        <h1 class="align-bottom d-flex align-items-center justify-content-between">
+            <span>Список опросов</span>
+            <a class="float-end btn btn-success " href="{{ path('app_survey_new') }}">Создать новый</a>
+        </h1>
+        <hr>
+        <div class="card">
+            <ul class="list-group list-group-flush">
+                {% for survey in surveys %}
+                    <li class="list-group-item">
+                        <h3>{{ survey.name }}</h3>
+                        <div class="btn-group">
+                            <a class="btn btn-info" href="{{ path('app_survey_show', {'id': survey.id}) }}">
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    Просмотреть
+                                {% else %}
+                                    Пройти тест
+                                {% endif %}
+                            </a>
+                            {% if is_granted('ROLE_ADMIN') %}
+                            <a class="btn btn-success"  href="{{ path('app_survey_edit', {'id': survey.id}) }}">Редактировать тест</a>
+                            <a class="btn btn-danger"  href="{{ path('app_survey_edit', {'id': survey.id}) }}">Удалить тест</a>
+                            {% endif %}
+                        </div>
+                    </li>
+                {% else %}
+                    <li class="list-group-item">
+                        <h3 class="text-center">Нет опросов</h3>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
 {% endblock %}
