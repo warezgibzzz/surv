@@ -4,6 +4,14 @@
 
 {% block body %}
     <div class="col-md-6 col-lg-4 col-sm-12 offset-md-3 offset-lg-4">
+        <p>
+            Админ <br>
+            admin@example.com - 123123123
+        </p>
+        <p>
+            Обычный пользователь <br>
+            test@example.com - 123123123
+        </p>
         <form method="post">
             {% if error %}
                 <div class="alert alert-danger">{{ error.messageKey|trans(error.messageData, 'security') }}</div>
