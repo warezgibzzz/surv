@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Answer;
+use App\Entity\Result;
 use App\Entity\Survey;
 use App\Entity\User;
 use App\Form\SurveyType;
@@ -138,6 +139,19 @@ class SurveyController extends AbstractController
         if ($this->isCsrfTokenValid('delete' . $survey->getId(), $request->request->get('_token'))) {
             $surveyRepository->remove($survey, true);
         }
+
+        return $this->redirectToRoute('app_survey_index', [], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/survey/{id}/answer', name: 'app_survey_answer', methods: ['POST'])]
+    public function surveyAnswer(Request $request, Survey $survey, ResultRepository $resultRepository): Response
+    {
+        $result = new Result();
+        $result->setSurvey($survey);
+        $result->setParticipant($this->getUser());
+        $result->setData($request->request->all('result'));
+
+        $resultRepository->add($result, true);
 
         return $this->redirectToRoute('app_survey_index', [], Response::HTTP_SEE_OTHER);
     }

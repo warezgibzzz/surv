@@ -22,6 +22,7 @@ class RegistrationFormType extends AbstractType
                 'label' => 'Электронная почта'
             ])
             ->add('plainPassword', PasswordType::class, [
+                'label' => 'Пароль',
                 // instead of being set onto the object directly,
                 // this is read and encoded in the controller
                 'mapped' => false,

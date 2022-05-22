@@ -7,25 +7,44 @@
         <h1 class="align-bottom d-flex align-items-center justify-content-between">
             <span>{{ survey.name }}</span>
 
-            <span class="float-end d-flex align-items-center ">
+            <span class="float-end d-flex align-items-center">
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a class="btn btn-info d-block " href="{{ path('app_survey_index') }}">К списку</a>
 
-            <a class="btn btn-info d-block " href="{{ path('app_survey_index') }}">К списку</a>
+                    <a class="btn btn-success d-block "
+                       href="{{ path('app_survey_edit', {'id': survey.id}) }}">Редактировать</a>
 
-            <a class="btn btn-success d-block " href="{{ path('app_survey_edit', {'id': survey.id}) }}">Редактировать</a>
-
-            {{ include('survey/_delete_form.html.twig') }}
-
+                    {{ include('survey/_delete_form.html.twig') }}
+                {% endif %}
             </span>
         </h1>
-        <h1></h1>
-
         <h2>Вопросы теста:</h2>
         <div class="card">
-            <ul class="list-group list-group-flush">
-                {% for answer in survey.answers %}
-                    <li class="list-group-item">{{ answer.position }} &mdash; {{ answer.name }}</li>
-                {% endfor %}
-            </ul>
+            {% if not is_granted('ROLE_ADMIN') %}
+                <form method="post" action="{{ url('app_survey_answer', {'id': survey.id}) }}">
+                    <ul class="list-group list-group-flush">
+                        {% for key, answer in survey.answers %}
+                            <li class="list-group-item px-2">
+                                <p>{{ answer.position }} &mdash; {{ answer.name }}</p>
+                                <label for="answer{{ key }}" class="form-label d-block">Ваш ответ</label>
+                                <textarea class="d-block form-control mb-2" name="result[{{ key }}][answer]"
+                                          id="answer{{ key }}" cols="30" rows="10"
+                                          required></textarea>
+                                <input type="hidden" name="result[{{ key }}][question]" value="{{ answer.name }}">
+                            </li>
+                        {% endfor %}
+                        <li class="list-group-item px-2">
+                            <button class="btn btn-success">Отправить</button>
+                        </li>
+                    </ul>
+                </form>
+            {% else %}
+                <ul class="list-group list-group-flush">
+                    {% for answer in survey.answers %}
+                        <li class="list-group-item">{{ answer.position }} &mdash; {{ answer.name }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
         </div>
     </div>
 

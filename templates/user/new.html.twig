@@ -3,9 +3,13 @@
 {% block title %}New User{% endblock %}
 
 {% block body %}
-    <h1>Create new User</h1>
+    <div class="col-12">
+        <h1 class="align-bottom d-flex align-items-center justify-content-between">
+            <span>Создание пользователя</span>
+            <a class="float-end btn btn-success " href="{{ path('app_user_index') }}">К списку</a>
+        </h1>
 
-    {{ include('user/_form.html.twig') }}
+        {{ include('user/_form.html.twig') }}
 
-    <a href="{{ path('app_user_index') }}">back to list</a>
+    </div>
 {% endblock %}
