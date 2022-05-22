@@ -15,8 +15,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-
-
     public function __construct(
         #[ORM\Id]
         #[ORM\GeneratedValue]
@@ -33,7 +31,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         private array                    $roles = [],
 
         #[ORM\OneToMany(mappedBy: 'participant', targetEntity: Result::class, orphanRemoval: true)]
-        private readonly ArrayCollection $results = new ArrayCollection()
+        private $results = new ArrayCollection()
     )
     {
     }

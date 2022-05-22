@@ -10,22 +10,20 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: SurveyRepository::class)]
 class Survey
 {
-
-
     public function __construct(
         #[ORM\Id]
         #[ORM\GeneratedValue]
         #[ORM\Column(type: 'integer')]
-        private readonly int             $id,
+        private readonly int $id,
 
         #[ORM\Column(type: 'string', length: 255)]
-        private string                   $name,
+        private string       $name,
 
         #[ORM\OneToMany(mappedBy: 'survey', targetEntity: Answer::class, orphanRemoval: true)]
-        private readonly ArrayCollection $answers = new ArrayCollection(),
+        private              $answers = new ArrayCollection(),
 
         #[ORM\OneToMany(mappedBy: 'survey', targetEntity: Result::class, orphanRemoval: true)]
-        private readonly ArrayCollection $results = new ArrayCollection(),
+        private              $results = new ArrayCollection(),
     )
     {
     }

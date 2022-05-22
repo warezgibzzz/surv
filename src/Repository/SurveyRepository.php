@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Survey;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -39,20 +40,22 @@ class SurveyRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Survey[] Returns an array of Survey objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('s')
-//            ->andWhere('s.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('s.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+    /**
+     * @return Survey[] Returns an array of Survey objects
+     */
+    public function findWhereNotAnsweredByUser(User $user): array
+    {
+        return $this->createQueryBuilder('s')
+            ->leftJoin('s.results', 'r')
+            ->leftJoin('r.participant', 'p')
+            ->andWhere('r.id is null')
+            ->orWhere('p.id <> :user')
+            ->setParameter('user', $user->getId())
+            ->orderBy('s.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 
 //    public function findOneBySomeField($value): ?Survey
 //    {
