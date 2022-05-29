@@ -12,41 +12,10 @@
             </span>
         </h1>
         <hr>
-        {{ form_start(form) }}
-        {{ form_row(form.name) }}
-
-        <ol class="questions form-collection"
-            data-index="{{ form.questions|length > 0 ? form.questions|last.vars.name + 1 : 0 }}"
-            data-prototype="{{ form_widget(form.questions.vars.prototype)|e('html_attr') }}"
-        >
-            {% for key, question in form.questions %}
-                <li class="clearfix">
-                    {{ form_row(question.name) }}
-                    {{ form_row(question.position) }}
-                    <ol class="answers question-{{ key }}-answers form-collection"
-                        data-index="{{ question.answers|length > 0 ? question.answers|last.vars.name + 1 : 0 }}"
-                        data-prototype="{{ form_widget(question.answers.vars.prototype)|e('html_attr') }}"
-                    >
-                        {% for answer in question.answers %}
-                            <li class="clearfix">
-                                {{ form_row(answer.text) }}
-                                {{ form_row(answer.valid) }}
-                            </li>
-                        {% endfor %}
-                        <li class="clearfix">
-                            <button type="button" class="add_item_link btn btn-success"
-                                    data-collection-holder-class="question-{{ key }}-answers">Добавить ответ
-                            </button>
-                        </li>
-                    </ol>
-                </li>
-            {% endfor %}
-        </ol>
-        <div class="clearfix mt-2"></div>
-        <div class="clearfix mt-2"></div>
-        <button class="btn btn-success">{{ button_label|default('Сохранить') }}</button>
-        {{ form_end(form) }}
-
+        {{ component('survey_form', {
+            survey: survey,
+            form: form
+        }) }}
     </div>
 
 {% endblock %}
