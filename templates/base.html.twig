@@ -4,9 +4,22 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{% block title %}Опросы{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor"
-          crossorigin="anonymous">
+    {% block stylesheets %}
+        {# 'app' must match the first argument to addEntry() in webpack.config.js #}
+        {{ encore_entry_link_tags('app') }}
+
+        <!-- Renders a link tag (if your module requires any CSS)
+             <link rel="stylesheet" href="/build/app.css"> -->
+    {% endblock %}
+
+    {% block javascripts %}
+        {{ encore_entry_script_tags('app') }}
+
+        <!-- Renders app.js & a webpack runtime.js file
+            <script src="/build/runtime.js" defer></script>
+            <script src="/build/app.js" defer></script>
+            See note below about the "defer" attribute -->
+    {% endblock %}
 </head>
 <body>
 <nav class="navbar bg-dark navbar-dark mb-2 navbar-expand-md">
@@ -39,6 +52,12 @@
                         <a class="nav-link" href="{{ url('app_register') }}">Регистрация</a>
                     </li>
                 {% endif %}
+                {% if is_granted('IS_IMPERSONATOR') %}
+                    <li class="nav-item">
+                        <a class="nav-link"
+                           href="{{ impersonation_exit_path(path('app_survey_index') ) }}">Вернуться</a>
+                    </li>
+                {% endif %}
             </ul>
         </div>
     </div>
@@ -46,59 +65,5 @@
 <div class="container">
     {% block body %}{% endblock %}
 </div>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-pprn3073KE6tl6bjs2QrFaJGz5/SUsLqktiwsUTF55Jfv3qYSDhgCecCxMW52nD2"
-        crossorigin="anonymous"></script>
-<script>
-    const addTagFormDeleteLink = (item) => {
-        const removeFormButton = document.createElement('button');
-        removeFormButton.innerText = 'Удалить';
-        removeFormButton.classList.add('btn', 'btn-danger', 'float-end');
-
-        item.append(removeFormButton);
-
-        removeFormButton.addEventListener('click', (e) => {
-            e.preventDefault();
-            // remove the li for the tag form
-            item.remove();
-        });
-    }
-
-    const addFormToCollection = (e) => {
-        const collectionHolder = document.querySelector('.' + e.currentTarget.dataset.collectionHolderClass);
-
-        const item = document.createElement('li');
-
-        item.classList.add('clearfix');
-
-        item.innerHTML = collectionHolder
-            .dataset
-            .prototype
-            .replace(
-                /__name__/g,
-                collectionHolder.dataset.index
-            );
-
-
-        addTagFormDeleteLink(item);
-
-        collectionHolder.appendChild(item);
-
-        collectionHolder.dataset.index++;
-
-    };
-
-    document
-        .querySelectorAll('.form-collection li')
-        .forEach((tag) => {
-            addTagFormDeleteLink(tag)
-        })
-
-    document
-        .querySelectorAll('.add_item_link')
-        .forEach(btn => {
-            btn.addEventListener("click", addFormToCollection)
-        });
-</script>
 </body>
 </html>

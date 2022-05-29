@@ -1,0 +1,80 @@
+<div
+        {{ attributes }}
+        {#
+        Automatically catch all "change" events from the fields
+        below and re-render the component.
+
+        Another common value is "input", which renders whenever
+        the "input" event fires (e.g. as you type in a field).
+        Note: if you use "input", Symfony's form system trims empty
+        spaces. This means that if the user types a space, then waits,
+        the re-render will remove the space. Set the "trim" option
+        to false on any fields with this problem.
+        #}
+        data-action="change->live#update"
+        class="mb-3"
+>
+    {{ form_start(form) }}
+    {{ form_row(form.name) }}
+    <div class="mb-3">
+        <label for="questions">Вопросы</label>
+        <ol id="questions">
+            {% for questionKey, questionForm in form.questions %}
+                <li class="clearfix">
+                    {% do questionForm.answers.setRendered %}
+                    {{ form_widget(questionForm) }}
+                    <div class="mb-3">
+                        <label for="answers-{{ questionKey }}">Ответы</label>
+
+                        <ol id="answers-{{ questionKey }}">
+                            {% for answerKey, answerForm in questionForm.answers %}
+                                <li class="clearfix">
+                                    <div class="mb-3">
+
+                                        {{ form_widget(answerForm) }}
+                                        <button
+                                                data-action="live#action"
+                                                data-action-name="removeAnswer(index={{ answerKey }}, questionIndex={{ questionKey }})"
+                                                type="button"
+                                                class="btn btn-danger float-end"
+                                        >&times;
+                                        </button>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ol>
+                    </div>
+
+                    <button
+                            data-action="live#action"
+                            data-action-name="addAnswer(index={{ questionKey }})"
+                            type="button"
+                            class="btn btn-success"
+                    >+ Добавить ответ
+                    </button>
+                    <button
+                            data-action="live#action"
+                            data-action-name="removeQuestion(index={{ questionKey }})"
+                            type="button"
+                            class="btn btn-danger float-end"
+                    >&times;
+                    </button>
+                </li>
+            {% endfor %}
+        </ol>
+    </div>
+
+    {# avoid an extra label for this field #}
+    {% do form.questions.setRendered %}
+
+    <button
+            data-action="live#action"
+            data-action-name="addQuestion"
+            type="button"
+            class="btn btn-success"
+    >+ Добавить вопрос
+    </button>
+</div>
+<button class="btn btn-success">Создать</button>
+{{ form_end(form) }}
+</div>

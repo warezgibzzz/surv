@@ -31,6 +31,7 @@
                                           id="answer{{ key }}" cols="30" rows="10"
                                           required></textarea>
                                 <input type="hidden" name="result[{{ key }}][question]" value="{{ answer.name }}">
+                                <input type="hidden" name="result[{{ key }}][id]" value="{{ answer.id }}">
                             </li>
                         {% endfor %}
                         <li class="list-group-item px-2">

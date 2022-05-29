@@ -9,20 +9,9 @@
             <a class="float-end btn btn-success " href="{{ path('app_survey_index') }}">К списку</a>
         </h1>
         <hr>
-        {{ form_start(form) }}
-        {{ form_row(form.name) }}
-        <ol class="answers form-collection"
-            data-index="{{ form.answers|length > 0 ? form.answers|last.vars.name + 1 : 0 }}"
-            data-prototype="{{ form_widget(form.answers.vars.prototype)|e('html_attr') }}"
-        >
-            {% set answers = form_row(form.answers) %}
-        </ol>
-        <div class="clearfix mt-2"></div>
-        <button type="button" class="add_item_link btn btn-success" data-collection-holder-class="answers">Добавить
-            вопрос
-        </button>
-        <div class="clearfix mt-2"></div>
-        <button class="btn btn-success">{{ button_label|default('Создать') }}</button>
-        {{ form_end(form) }}
+        {{ component('survey_form', {
+            survey: null,
+            form: form
+        }) }}
     </div>
 {% endblock %}

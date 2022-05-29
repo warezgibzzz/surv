@@ -2,12 +2,13 @@
 
 namespace App\Controller;
 
-use App\Entity\Answer;
+use App\Entity\Question;
 use App\Entity\Result;
 use App\Entity\Survey;
 use App\Entity\User;
 use App\Form\SurveyType;
-use App\Repository\AnswerRepository;
+use App\Repository\QuestionRepository;
+use App\Repository\QuestionAnswerRepository;
 use App\Repository\ResultRepository;
 use App\Repository\SurveyRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -40,10 +41,11 @@ class SurveyController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/survey/new', name: 'app_survey_new', methods: ['GET', 'POST'])]
     public function new(
-        Request                $request,
-        SurveyRepository       $surveyRepository,
-        AnswerRepository       $answerRepository,
-        EntityManagerInterface $manager
+        Request                  $request,
+        SurveyRepository         $surveyRepository,
+        QuestionRepository       $questionRepository,
+        QuestionAnswerRepository $questionAnswerRepository,
+        EntityManagerInterface   $manager
     ): Response
     {
         $survey = new Survey();
@@ -52,9 +54,13 @@ class SurveyController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $surveyRepository->add($survey);
-            foreach ($survey->getAnswers() as $answer) {
-                $answer->setSurvey($survey);
-                $answerRepository->add($answer);
+            foreach ($survey->getQuestions() as $question) {
+                $question->setSurvey($survey);
+                foreach ($question->getAnswers() as $answer) {
+                    $answer->setQuestion($question);
+                    $questionAnswerRepository->add($answer);
+                }
+                $questionRepository->add($question);
             }
 
             $manager->flush();
@@ -82,9 +88,9 @@ class SurveyController extends AbstractController
             return $this->redirectToRoute('app_survey_index');
         }
 
-        $answers = $survey->getAnswers()->toArray();
+        $answers = $survey->getQuestions()->toArray();
 
-        usort($answers, function (Answer $a, Answer $b) {
+        usort($answers, function (Question $a, Question $b) {
             if ($a->getPosition() == $b->getPosition()) {
                 return 0;
             }
@@ -104,11 +110,12 @@ class SurveyController extends AbstractController
     #[IsGranted('ROLE_ADMIN')]
     #[Route('/survey/{id}/edit', name: 'app_survey_edit', methods: ['GET', 'POST'])]
     public function edit(
-        Request                $request,
-        Survey                 $survey,
-        SurveyRepository       $surveyRepository,
-        AnswerRepository       $answerRepository,
-        EntityManagerInterface $manager
+        Request                  $request,
+        Survey                   $survey,
+        SurveyRepository         $surveyRepository,
+        QuestionRepository       $questionRepository,
+        QuestionAnswerRepository $questionAnswerRepository,
+        EntityManagerInterface   $manager
     ): Response
     {
         $form = $this->createForm(SurveyType::class, $survey);
@@ -116,9 +123,13 @@ class SurveyController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $surveyRepository->add($survey);
-            foreach ($survey->getAnswers() as $answer) {
-                $answer->setSurvey($survey);
-                $answerRepository->add($answer);
+            foreach ($survey->getQuestions() as $question) {
+                $question->setSurvey($survey);
+                foreach ($question->getAnswers() as $answer) {
+                    $answer->setQuestion($question);
+                    $questionAnswerRepository->add($answer);
+                }
+                $questionRepository->add($question);
             }
 
             $manager->flush();
@@ -146,13 +157,35 @@ class SurveyController extends AbstractController
     #[Route('/survey/{id}/answer', name: 'app_survey_answer', methods: ['POST'])]
     public function surveyAnswer(Request $request, Survey $survey, ResultRepository $resultRepository): Response
     {
+        /** @var User $user */
+        $user = $this->getUser();
+
         $result = new Result();
         $result->setSurvey($survey);
-        $result->setParticipant($this->getUser());
+        $result->setParticipant($user);
         $result->setData($request->request->all('result'));
-
         $resultRepository->add($result, true);
 
-        return $this->redirectToRoute('app_survey_index', [], Response::HTTP_SEE_OTHER);
+        return $this->redirectToRoute('app_survey_result', ['id' => $result->getId()], Response::HTTP_SEE_OTHER);
+    }
+
+    #[Route('/result/{id}', name: 'app_survey_result', methods: ['GET'])]
+    public function showResult(Result $result, QuestionRepository $answerRepository): Response
+    {
+        $answersValid = 0;
+        $answersInvalid = 0;
+        foreach ($result->getData() as $key => $item) {
+            $answer = $answerRepository->find($item['id']);
+            if ($answer) {
+                $answer->isValid() ? $answersValid++ : $answersInvalid++;
+            } else {
+                $answersInvalid++;
+            }
+        }
+
+        return $this->render('result/participant.html.twig', [
+            'answersValid' => $answersValid,
+            'answersInvalid' => $answersInvalid
+        ]);
     }
 }

@@ -15,19 +15,34 @@
         {{ form_start(form) }}
         {{ form_row(form.name) }}
 
-        <ol class="answers form-collection"
-            data-index="{{ form.answers|length > 0 ? form.answers|last.vars.name + 1 : 0 }}"
-            data-prototype="{{ form_widget(form.answers.vars.prototype)|e('html_attr') }}"
+        <ol class="questions form-collection"
+            data-index="{{ form.questions|length > 0 ? form.questions|last.vars.name + 1 : 0 }}"
+            data-prototype="{{ form_widget(form.questions.vars.prototype)|e('html_attr') }}"
         >
-            {% for answer in form.answers %}
+            {% for key, question in form.questions %}
                 <li class="clearfix">
-                    {{ form_row(answer.name) }}
-                    {{ form_row(answer.position) }}
+                    {{ form_row(question.name) }}
+                    {{ form_row(question.position) }}
+                    <ol class="answers question-{{ key }}-answers form-collection"
+                        data-index="{{ question.answers|length > 0 ? question.answers|last.vars.name + 1 : 0 }}"
+                        data-prototype="{{ form_widget(question.answers.vars.prototype)|e('html_attr') }}"
+                    >
+                        {% for answer in question.answers %}
+                            <li class="clearfix">
+                                {{ form_row(answer.text) }}
+                                {{ form_row(answer.valid) }}
+                            </li>
+                        {% endfor %}
+                        <li class="clearfix">
+                            <button type="button" class="add_item_link btn btn-success"
+                                    data-collection-holder-class="question-{{ key }}-answers">Добавить ответ
+                            </button>
+                        </li>
+                    </ol>
                 </li>
             {% endfor %}
         </ol>
         <div class="clearfix mt-2"></div>
-        <button type="button" class="add_item_link btn btn-success" data-collection-holder-class="answers">Добавить вопрос</button>
         <div class="clearfix mt-2"></div>
         <button class="btn btn-success">{{ button_label|default('Сохранить') }}</button>
         {{ form_end(form) }}

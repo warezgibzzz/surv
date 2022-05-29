@@ -14,14 +14,16 @@ class Survey
         #[ORM\Id]
         #[ORM\GeneratedValue]
         #[ORM\Column(type: 'integer')]
-        private ?int                 $id = null,
+        private ?int        $id = null,
 
         #[ORM\Column(type: 'string', length: 255)]
-        private ?string              $name = null,
+        private ?string     $name = null,
 
-        #[ORM\OneToMany(mappedBy: 'survey', targetEntity: Answer::class, orphanRemoval: true)]
-        private ?Collection $answers = new ArrayCollection(),
+        /** @var Question[] $questions */
+        #[ORM\OneToMany(mappedBy: 'survey', targetEntity: Question::class, orphanRemoval: true)]
+        private ?Collection $questions = new ArrayCollection(),
 
+        /** @var Result[] $results */
         #[ORM\OneToMany(mappedBy: 'survey', targetEntity: Result::class, orphanRemoval: true)]
         private ?Collection $results = new ArrayCollection(),
     )
@@ -46,29 +48,29 @@ class Survey
     }
 
     /**
-     * @return Collection<int, Answer>
+     * @return Collection<int, Question>
      */
-    public function getAnswers(): Collection
+    public function getQuestions(): Collection
     {
-        return $this->answers;
+        return $this->questions;
     }
 
-    public function addAnswer(Answer $answer): self
+    public function addQuestion(Question $question): self
     {
-        if (!$this->answers->contains($answer)) {
-            $this->answers->add($answer);
-            $answer->setSurvey($this);
+        if (!$this->questions->contains($question)) {
+            $this->questions->add($question);
+            $question->setSurvey($this);
         }
 
         return $this;
     }
 
-    public function removeAnswer(Answer $answer): self
+    public function removeQuestion(Question $question): self
     {
-        if ($this->answers->removeElement($answer)) {
+        if ($this->questions->removeElement($question)) {
             // set the owning side to null (unless already changed)
-            if ($answer->getSurvey() === $this) {
-                $answer->setSurvey(null);
+            if ($question->getSurvey() === $this) {
+                $question->setSurvey(null);
             }
         }
 
