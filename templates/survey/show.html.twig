@@ -23,15 +23,17 @@
             {% if not is_granted('ROLE_ADMIN') %}
                 <form method="post" action="{{ url('app_survey_answer', {'id': survey.id}) }}">
                     <ul class="list-group list-group-flush">
-                        {% for key, answer in survey.answers %}
+                        {% for key, question in survey.questions %}
                             <li class="list-group-item px-2">
-                                <p>{{ answer.position }} &mdash; {{ answer.name }}</p>
-                                <label for="answer{{ key }}" class="form-label d-block">Ваш ответ</label>
-                                <textarea class="d-block form-control mb-2" name="result[{{ key }}][answer]"
-                                          id="answer{{ key }}" cols="30" rows="10"
-                                          required></textarea>
-                                <input type="hidden" name="result[{{ key }}][question]" value="{{ answer.name }}">
-                                <input type="hidden" name="result[{{ key }}][id]" value="{{ answer.id }}">
+                                <p>{{ question.position }} &mdash; {{ question.name }}</p>
+                                {% for answer in question.answers %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="{{ answer.id }}" name="result[{{ key }}][id]" id="answer{{ answer.id }}" required>
+                                    <label class="form-check-label" for="answer{{ answer.id }}">
+                                        {{ answer.text }}
+                                    </label>
+                                </div>
+                                {% endfor %}
                             </li>
                         {% endfor %}
                         <li class="list-group-item px-2">
@@ -41,8 +43,20 @@
                 </form>
             {% else %}
                 <ul class="list-group list-group-flush">
-                    {% for answer in survey.answers %}
-                        <li class="list-group-item">{{ answer.position }} &mdash; {{ answer.name }}</li>
+                    {% for question in survey.questions %}
+                        <li class="list-group-item">
+                            <p>{{ question.position }} &mdash; {{ question.name }}</p>
+                            <ol>
+                                {% for answer in question.answers %}
+                                    <li>
+                                        {{ answer.text }}
+                                        {% if answer.valid %}
+                                            <span class="ml-1 badge bg-success">верный ответ</span>
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ol>
+                        </li>
                     {% endfor %}
                 </ul>
             {% endif %}
