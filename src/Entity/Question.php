@@ -10,17 +10,27 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: QuestionRepository::class)]
 class Question
 {
-    #[ORM\OneToMany(mappedBy: 'question', targetEntity: QuestionAnswer::class, orphanRemoval: true)]
-    private $answers;
 
-    public function __construct(#[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column(type: 'integer')]
-    private ?int    $id = null, #[ORM\Column(type: 'text')]
-    private ?string $name = null, #[ORM\ManyToOne(targetEntity: Survey::class, inversedBy: 'questions')]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?Survey $survey = null, #[ORM\Column(type: 'integer')]
-    private ?int    $position = null)
+    public function __construct(
+        #[ORM\Id]
+        #[ORM\GeneratedValue]
+        #[ORM\Column(type: 'integer')]
+        private ?int        $id = null,
+
+        #[ORM\Column(type: 'text')]
+        private ?string     $name = null,
+
+        #[ORM\ManyToOne(targetEntity: Survey::class, inversedBy: 'questions')]
+        #[ORM\JoinColumn(nullable: false)]
+        private ?Survey     $survey = null,
+
+        #[ORM\Column(type: 'integer')]
+        private ?int        $position = null,
+
+        #[ORM\OneToMany(mappedBy: 'question', targetEntity: QuestionAnswer::class, cascade: ['persist'], orphanRemoval: true)]
+        private ?Collection $answers = new ArrayCollection()
+    )
+
     {
         $this->answers = new ArrayCollection();
     }
@@ -28,7 +38,8 @@ class Question
     /**
      * @return int
      */
-    public function getId(): int
+    public
+    function getId(): int
     {
         return $this->id;
     }
@@ -36,7 +47,8 @@ class Question
     /**
      * @return string
      */
-    public function getName(): string
+    public
+    function getName(): string
     {
         return $this->name;
     }
@@ -44,7 +56,8 @@ class Question
     /**
      * @param string $name
      */
-    public function setName(string $name): void
+    public
+    function setName(string $name): void
     {
         $this->name = $name;
     }
@@ -52,7 +65,8 @@ class Question
     /**
      * @return Survey
      */
-    public function getSurvey(): Survey
+    public
+    function getSurvey(): Survey
     {
         return $this->survey;
     }
@@ -60,7 +74,8 @@ class Question
     /**
      * @param Survey $survey
      */
-    public function setSurvey(Survey $survey): void
+    public
+    function setSurvey(Survey $survey): void
     {
         $this->survey = $survey;
     }
@@ -68,7 +83,8 @@ class Question
     /**
      * @return int
      */
-    public function getPosition(): int
+    public
+    function getPosition(): int
     {
         return $this->position;
     }
@@ -76,7 +92,8 @@ class Question
     /**
      * @param int $position
      */
-    public function setPosition(int $position): void
+    public
+    function setPosition(int $position): void
     {
         $this->position = $position;
     }
@@ -84,12 +101,14 @@ class Question
     /**
      * @return Collection<int, QuestionAnswer>
      */
-    public function getAnswers(): Collection
+    public
+    function getAnswers(): Collection
     {
         return $this->answers;
     }
 
-    public function addAnswer(QuestionAnswer $answer): self
+    public
+    function addAnswer(QuestionAnswer $answer): self
     {
         if (!$this->answers->contains($answer)) {
             $this->answers[] = $answer;
@@ -99,7 +118,8 @@ class Question
         return $this;
     }
 
-    public function removeAnswer(QuestionAnswer $answer): self
+    public
+    function removeAnswer(QuestionAnswer $answer): self
     {
         if ($this->answers->removeElement($answer)) {
             // set the owning side to null (unless already changed)

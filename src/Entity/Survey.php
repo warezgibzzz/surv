@@ -20,7 +20,7 @@ class Survey
         private ?string     $name = null,
 
         /** @var Question[] $questions */
-        #[ORM\OneToMany(mappedBy: 'survey', targetEntity: Question::class, orphanRemoval: true)]
+        #[ORM\OneToMany(mappedBy: 'survey', targetEntity: Question::class, cascade: ['persist'], orphanRemoval: true)]
         private ?Collection $questions = new ArrayCollection(),
 
         /** @var Result[] $results */

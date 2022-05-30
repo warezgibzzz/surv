@@ -123,14 +123,6 @@ class SurveyController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $surveyRepository->add($survey);
-            foreach ($survey->getQuestions() as $question) {
-                $question->setSurvey($survey);
-                foreach ($question->getAnswers() as $answer) {
-                    $answer->setQuestion($question);
-                    $questionAnswerRepository->add($answer);
-                }
-                $questionRepository->add($question);
-            }
 
             $manager->flush();
 
