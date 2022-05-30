@@ -28,7 +28,7 @@
                                 <p>{{ question.position }} &mdash; {{ question.name }}</p>
                                 {% for answer in question.answers %}
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="{{ answer.id }}" name="result[{{ key }}][id]" id="answer{{ answer.id }}" required>
+                                    <input class="form-check-input" type="checkbox" value="{{ answer.id }}" name="result[{{ key }}][id]" id="answer{{ answer.id }}">
                                     <label class="form-check-label" for="answer{{ answer.id }}">
                                         {{ answer.text }}
                                     </label>
